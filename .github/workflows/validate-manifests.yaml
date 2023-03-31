@@ -1,0 +1,64 @@
+name: Kustomize build overlays
+
+on:
+  workflow_call:
+    inputs:
+      common_ci_repository:
+        type: string
+        description: "Common CI repository name"
+        default: "ocp-on-nerc/workflows"
+        required: false
+      common_ci_ref:
+        type: string
+        description: "Common CI repository reference"
+        default: main
+        required: false
+      schema_repository:
+        type: string
+        description: "API schema repository name"
+        default: "ocp-on-nerc/ocp-api-schemas"
+        required: false
+      schema_ref:
+        type: string
+        description: "API schema repository reference"
+        default: main
+        required: false
+
+jobs:
+  validate-manifests:
+    runs-on: ubuntu-latest
+
+    env:
+      TERM: xterm-256color
+      COMMON_CI: "${{ github.workspace }}/common-ci"
+      OCP_SCHEMAS: "${{ github.workspace }}/ocp-api-schemas"
+      BINDIR: "${{ github.workspace }}/bin"
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Check out CI scripts
+        uses: actions/checkout@v3
+        with:
+          repository: ${{ inputs.common_ci_repository }}
+          ref: ${{ inputs.common_ci_ref }}
+          path: "${{ env.COMMON_CI }}"
+
+      - name: Checkout additional schema definitions
+        uses: actions/checkout@v3
+        with:
+          repository: ${{ inputs.schema_repository }}
+          ref: ${{ inputs.schema_ref }}
+          path: "${{ env.OCP_SCHEMAS }}"
+
+      - name: Install required binaries
+        run: |
+          ${COMMON_CI}/scripts/install-kubeconform.sh
+          ${COMMON_CI}/scripts/install-kustomize.sh
+
+      - name: Validate manifests
+        run: |
+          ${COMMON_CI}/scripts/validate-manifests.sh
+        env:
+          ADDITIONAL_SCHEMAS: "${{ env.OCP_SCHEMAS }}/schemas"
