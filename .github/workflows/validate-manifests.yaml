@@ -36,17 +36,17 @@ jobs:
 
     steps:
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Check out CI scripts
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: ${{ inputs.common_ci_repository }}
           ref: ${{ inputs.common_ci_ref }}
           path: "${{ env.COMMON_CI }}"
 
       - name: Checkout additional schema definitions
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: ${{ inputs.schema_repository }}
           ref: ${{ inputs.schema_ref }}
