@@ -6,12 +6,17 @@ name: Build container image
 # documentation.
 
 on:
-  push:
-    branches: [main]
-    # Publish semver tags as releases.
-    tags: ['v*.*.*']
-  pull_request:
-    branches: [main]
+  workflow_call:
+# push:
+#   branches: [main]
+#   # Publish semver tags as releases.
+#   tags: ['v*.*.*']
+# pull_request:
+#   branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 env:
   # Use docker.io for Docker Hub if empty
