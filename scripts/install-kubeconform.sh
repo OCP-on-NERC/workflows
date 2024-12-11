@@ -2,7 +2,7 @@
 
 set -eu
 
-: "${KUBECONFORM_VERSION:=0.6.1}"
+: "${KUBECONFORM_VERSION:=0.6.7}"
 
 echo "Installing kubeconform to ${BINDIR}/kubeconform..."
 mkdir -p "$BINDIR"
